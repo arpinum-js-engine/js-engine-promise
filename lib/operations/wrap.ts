@@ -1,7 +1,11 @@
-import { PromiseFunction, PromiseMaybeFunction } from '../types';
-
-export function wrap<T>(func: PromiseMaybeFunction<T>): PromiseFunction<T> {
-  return (...args) => {
+export function wrap<F extends (...args: any[]) => any>(
+  func: F
+): (...args: Parameters<F>) => Promise<ReturnType<F>>;
+export function wrap<F extends (...args: any[]) => Promise<any>>(
+  func: F
+): (...args: Parameters<F>) => ReturnType<F>;
+export function wrap(func: Function): Function {
+  return (...args: any[]) => {
     return new Promise((resolve, reject) => {
       try {
         const result = func(...args);
