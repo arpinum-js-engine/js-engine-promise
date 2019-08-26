@@ -17,21 +17,32 @@ export function retryWithOptions<F extends AnyFunction>(
     onFinalError = () => undefined
   } = options;
   const wrappedFunc = wrap(func);
+  return doRetryWithOptions(
+    { retryCount, onTryError, onFinalError },
+    wrappedFunc
+  );
+}
+
+export function doRetryWithOptions<F extends AnyFunction>(
+  options: Required<Options>,
+  func: F
+): PromisifiedFunction<F> {
+  const { retryCount, onTryError, onFinalError } = options;
   return (...args: Parameters<F>) => {
-    return wrappedFunc(...args).catch((error: Error) => {
+    return func(...args).catch((error: Error) => {
       const nextRetryCount = retryCount - 1;
       if (nextRetryCount < 0) {
         onFinalError(error);
         throw error;
       }
       onTryError(error);
-      return retryWithOptions(
+      return doRetryWithOptions(
         {
           retryCount: nextRetryCount,
           onTryError,
           onFinalError
         },
-        wrappedFunc
+        func
       )(...args);
     });
   };
