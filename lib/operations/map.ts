@@ -5,20 +5,10 @@ interface Options {
   concurrency?: number;
 }
 function rawMapWithOptions<T1, T2>(
-  func: (v: T1) => Promise<T2>,
-  options: Options,
-  values: T1[]
-): Promise<T2[]>;
-function rawMapWithOptions<T1, T2>(
-  func: (v: T1) => T2,
-  options: Options,
-  values: T1[]
-): Promise<T2[]>;
-function rawMapWithOptions<T1, T2>(
   func: (v: T1) => T2 | Promise<T2>,
   options: Options,
   values: T1[]
-): Promise<any> {
+): Promise<T2[]> {
   const opts = Object.assign({}, { concurrency: 3 }, options);
   return doRawMapWithOptions(wrap(func), opts, values);
 }

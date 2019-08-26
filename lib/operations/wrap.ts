@@ -1,10 +1,12 @@
+type Promisified<T> = [T] extends [never]
+  ? Promise<never>
+  : T extends Promise<any>
+  ? T
+  : Promise<T>;
+
 export function wrap<F extends (...args: any[]) => any>(
   func: F
-): (...args: Parameters<F>) => Promise<ReturnType<F>>;
-export function wrap<F extends (...args: any[]) => Promise<any>>(
-  func: F
-): (...args: Parameters<F>) => ReturnType<F>;
-export function wrap(func: Function): Function {
+): (...args: Parameters<F>) => Promisified<ReturnType<F>> {
   return (...args: any[]) => {
     return new Promise((resolve, reject) => {
       try {
@@ -13,6 +15,6 @@ export function wrap(func: Function): Function {
       } catch (error) {
         reject(error);
       }
-    });
+    }) as Promisified<ReturnType<F>>;
   };
 }
