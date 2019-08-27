@@ -23,7 +23,7 @@ export function retryWithOptions<F extends AnyFunction>(
   );
 }
 
-export function doRetryWithOptions<F extends AnyFunction>(
+function doRetryWithOptions<F extends AnyFunction>(
   options: Required<Options>,
   func: F
 ): PromisifiedFunction<F> {

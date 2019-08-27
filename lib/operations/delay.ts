@@ -9,7 +9,7 @@ function rawDelay<F extends AnyFunction>(
   milliseconds: number,
   func: F
 ): PromisifiedFunction<F> {
-  return (...args: any[]) =>
+  return (...args: Parameters<F>) =>
     new Promise(resolve => setTimeout(resolve, milliseconds)).then(() =>
       func(...args)
     ) as PromisifiedReturnType<F>;
